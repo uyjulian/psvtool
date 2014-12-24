@@ -1,6 +1,7 @@
 // credit to http://www.ps2savetools.com/documents/psvformatpas/
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/stat.h>
 typedef int8_t s8;
 typedef int16_t s16;
 typedef int32_t s32;
@@ -144,10 +145,19 @@ int main(int argc, char* argv[]) {
 	{
 		printf("n:%s c:%u/%u/%u %u:%u:%u m:%u/%u/%u %u:%u:%u\n", (fPS2Files[i]).filename, (fPS2Files[i]).CreateMonths, (fPS2Files[i]).CreateDays, (fPS2Files[i]).CreateYear, (fPS2Files[i]).CreateHours, (fPS2Files[i]).CreateMinutes, (fPS2Files[i]).CreateSeconds, (fPS2Files[i]).ModMonths, (fPS2Files[i]).ModDays, (fPS2Files[i]).ModYear, (fPS2Files[i]).ModHours, (fPS2Files[i]).ModMinutes, (fPS2Files[i]).ModSeconds);
 	}
-	
+
+	char* savewhere = ".";
+	if (argc == 3) {
+		savewhere = argv[2];
+	}
 	for (i=0;i<fPS2Head.numberOfFiles; i++)
 	{
-		FILE *fm = fopen((fPS2Files[i]).filename,"w");
+		char savefilepath[1024];
+		snprintf(savefilepath, 1024, "%s/%s", savewhere, fPS2Dir.filename);
+		char savefilefile[1024];
+		snprintf(savefilefile, 1024, "%s/%s", savefilepath, (fPS2Files[i]).filename);
+		mkdir(savefilepath, 0777);
+		FILE *fm = fopen(savefilefile,"w");
 		char bufferStuff[(fPS2Files[i]).filesize];
 		fseek(f, (fPS2Files[i]).filePosition, SEEK_SET);
 		fread(&bufferStuff,(fPS2Files[i]).filesize,1,f);
