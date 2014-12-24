@@ -139,11 +139,21 @@ int main(int argc, char* argv[]) {
 		fread(&(fPS2Files[i]),sizeof(PSVPS2FileInfo),1,f);
 	}
 
-	fclose(f);
+	
 	for (i=0;i<fPS2Head.numberOfFiles; i++)
 	{
 		printf("n:%s c:%u/%u/%u %u:%u:%u m:%u/%u/%u %u:%u:%u\n", (fPS2Files[i]).filename, (fPS2Files[i]).CreateMonths, (fPS2Files[i]).CreateDays, (fPS2Files[i]).CreateYear, (fPS2Files[i]).CreateHours, (fPS2Files[i]).CreateMinutes, (fPS2Files[i]).CreateSeconds, (fPS2Files[i]).ModMonths, (fPS2Files[i]).ModDays, (fPS2Files[i]).ModYear, (fPS2Files[i]).ModHours, (fPS2Files[i]).ModMinutes, (fPS2Files[i]).ModSeconds);
 	}
 	
+	for (i=0;i<fPS2Head.numberOfFiles; i++)
+	{
+		FILE *fm = fopen((fPS2Files[i]).filename,"w");
+		char bufferStuff[(fPS2Files[i]).filesize];
+		fseek(f, (fPS2Files[i]).filePosition, SEEK_SET);
+		fread(&bufferStuff,(fPS2Files[i]).filesize,1,f);
+		fwrite(&bufferStuff, (fPS2Files[i]).filesize, 1,fm);
+		fclose(fm);
+	}
 
+	fclose(f);
 }
